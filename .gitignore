@@ -22,6 +22,12 @@ bld/
 [Bb]in/
 [Oo]bj/
 
+# Data Sets
+Udacity_Deep-Learning_Python-Codes/Assignment1/notMNIST_large/
+Udacity_Deep-Learning_Python-Codes/Assignment1/notMNIST_small/
+Udacity_Deep-Learning_Python-Codes/Assignment1/notMNIST_large.tar.gz
+Udacity_Deep-Learning_Python-Codes/Assignment1/notMNIST_small.tar.gz
+
 # Visual Studio 2015 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
