@@ -13,6 +13,8 @@ import pickle
 
 url = 'http://commondatastorage.googleapis.com/books1000/'
 last_percent_reported = None
+dirname = os.path.dirname
+dataPath = dirname(dirname(os.getcwd()))+'\\DataSets\\'
 
 # Download progress hook function
 def download_progress_hook(count, blockSize, totalSize):
@@ -34,11 +36,13 @@ def download_progress_hook(count, blockSize, totalSize):
 #Download the data sets
 def maybe_download(filename, expected_bytes, force=False):
     #Download a file if not present, and make sure it's the right size.
-    if force or not os.path.exists(filename):
+    filePath = dataPath + filename
+
+    if force or not os.path.exists(filePath):
         print('Attempting to download:', filename)
-        filename, _ = urlretrieve(url + filename, filename, reporthook = download_progress_hook)
+        filename, _ = urlretrieve(url + filename, filePath, reporthook = download_progress_hook)
         print('\nDownload Complete!')
-    statinfo = os.stat(filename)
+    statinfo = os.stat(filePath)
 
     if statinfo.st_size == expected_bytes:
         print('Found and verified', filename)
@@ -55,12 +59,13 @@ num_classes = 10
 np.random.seed(133)
 
 def maybe_extract(filename, force = False):
-    root = os.path.splitext(os.path.splitext(filename)[0])[0] # remove .tar.gz
+    filePath = dataPath + filename
+    root = os.path.splitext(os.path.splitext(filePath)[0])[0] # remove .tar.gz
     if os.path.isdir(root) and not force:
         print('%s already present - Skipping extraction of %s. ' %(root, filename))
     else:
         print('Extracting data for %s. This may take a while. Please wait.' % root)
-        tar = tarfile.open(filename)
+        tar = tarfile.open(filePath)
         sys.stdout.flush()
         tar.extractall()
         tar.close()
