@@ -61,13 +61,14 @@ np.random.seed(133)
 def maybe_extract(filename, force = False):
     filePath = dataPath + filename
     root = os.path.splitext(os.path.splitext(filePath)[0])[0] # remove .tar.gz
+    print(root)
     if os.path.isdir(root) and not force:
         print('%s already present - Skipping extraction of %s. ' %(root, filename))
     else:
         print('Extracting data for %s. This may take a while. Please wait.' % root)
         tar = tarfile.open(filePath)
         sys.stdout.flush()
-        tar.extractall()
+        tar.extractall(dirname(root))
         tar.close()
     data_folders = [
         os.path.join(root, d) for d in sorted(os.listdir(root))
