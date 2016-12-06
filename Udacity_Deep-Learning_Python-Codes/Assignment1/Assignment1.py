@@ -96,11 +96,12 @@ pixel_depth = 255.0 # max intensity
 def load_letter(folder, min_num_images):
     # load the data for a single letter
     image_files = os.listdir(folder)
-    dataset = np.ndarray(shape=(len(image_files), image_size, image_size),dype=np.float32)
+    dataset = np.ndarray(shape=(len(image_files), image_size, image_size),
+                         dtype=np.float32)
     print(folder)    
     num_images = 0
 
-    for img in image_files:
+    for image  in image_files:
         image_file = os.path.join(folder, image)
         try:
             image_data = (ndimage.imread(image_file).astype(float) - pixel_depth/2)/pixel_depth
@@ -138,5 +139,6 @@ def maybe_pickle(data_folders, min_num_images_per_class, force = False):
                 print('Unable to save data to ', set_filename, ':', e)
     return dataset_names
 
-
+train_datasets = maybe_pickle(train_folders, 45000)
+test_datasets = maybe_pickle(test_folders, 1800)
 
