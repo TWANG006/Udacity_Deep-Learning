@@ -1,6 +1,7 @@
 from __future__ import print_function
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from IPython.display import display, Image
 import numpy as np
 import os
 import sys
@@ -10,6 +11,7 @@ from sklearn.linear_model import LogisticRegression
 from urllib.request import urlretrieve
 from pathlib import Path
 import pickle
+import random
 
 url = 'http://commondatastorage.googleapis.com/books1000/'
 last_percent_reported = None
@@ -84,6 +86,18 @@ train_folders = maybe_extract(train_filename)
 test_folders = maybe_extract(test_filename)
 
 #Problem 1 Display images
+def disp_samples(data_folders, sample_size):
+    for folder in data_folders:
+        print(folder)
+        image_files = os.listdir(folder)
+        image_sample = random.sample(image_files, sample_size)
+        for image in image_sample:
+            image_file = os.path.join(folder, image)
+            i = Image(filename=image_file)
+            display(i)
+
+disp_samples(train_folders, 1)
+disp_samples(test_folders, 1)
 #image_files = os.listdir(train_folders[0])
 
 #img = mpimg.imread(os.path.join(train_folders[0], image_files[0]))
