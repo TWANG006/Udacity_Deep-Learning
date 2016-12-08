@@ -156,3 +156,141 @@ def maybe_pickle(data_folders, min_num_images_per_class, force = False):
 train_datasets = maybe_pickle(train_folders, 45000)
 test_datasets = maybe_pickle(test_folders, 1800)
 
+# Problem 2
+def disp_sample_pickles(datafolders):
+    folder = random.sample(datafolders,1)
+    pickle_filename = ''.join(folder) + '.pickle'
+    try:
+        with open(pickle_filename, 'rb') as f:
+            dataset = pickle.load(f)
+    except Exception as e:
+        print('Unable to read data from', pickle_filename, ':',e)
+        return
+    #display
+    plt.suptitle(''.join(folder)[-1])
+    for i, img in enumerate(random.sample(list(dataset),8)):
+        plt.subplot(2,4,i+1)
+        plt.axis('off')
+        plt.imshow(img)
+    plt.show()
+
+disp_sample_pickles(train_folders)
+disp_sample_pickles(test_folders)
+
+#Problem 3
+def disp_number_images(datasets):
+   for dataset in datasets:
+        try:
+            with open(dataset, 'rb') as f:
+                data = pickle.load(f)
+        except Exception as e:
+            print('Unable to open', data, ':',e)
+            return
+        print('Number of images in', dataset, ':', len(data))
+
+disp_number_images(train_datasets)
+disp_number_images(test_datasets)
+
+def make_array(nb_rows, img_size):
+    if nb_rows:
+        dataset = np.ndarray((nb_rows, img_size, img_size), dtype = np.float32)
+        labels = np.ndarray(nb_rows, dtype = np.int32)
+    else:
+        dataset, labels = None, None
+    return dataset, labels
+
+def merge_datasets(pickle_files, train_size, valid_size = 0):
+    num_classes = len(pickle_files)
+    valid_dataset, valid_labels = make_array(valid_size, image_size)
+    train_dataset, train_labels = make_array(train_size, image_size)
+    vsize_per_class = valid_size // num_classes
+    tsize_per_class = train_size // num_classes
+
+    start_v, start_t = 0, 0
+    end_v, end_t = vsize_per_class, tsize_per_class
+    end_l = vsize_per_class + tsize_per_class
+
+    for label, pickle_file in enumerate(pickle_files):
+        try:
+            with open(pickle_file,'rb') as f:
+                letter_set = pickle.load(f)
+                # let's shuffle the letters to have random validation and training set
+                np.random.shuffle(letter_set)
+                if valid_dataset is not None:
+                    valid_letter = letter_set[:vsize_per_class,:,:]
+                    valid_dataset[start_v:end_v, :, :] = valid_letter
+                    valid_labels[start_v:end_v] = label
+                    start_v += vsize_per_class
+                    end_v += vsize_per_class
+
+                train_letter = letter_set[vsize_per_class:end_l,:,:]
+                train_dataset[start_t:end_t,:,:] = train_letter
+                train_labels[start_t:end_t] = label
+                start_t += tsize_per_class
+                end_t += tsize_per_class
+        except Exception as e:
+            print('Unable to process data from', pickle_file, ':', e)
+            raise
+    
+    return valid_dataset, valid_labels, train_dataset, train_labels
+
+train_size = 200000
+valid_size = 10000
+test_size = 10000
+
+valid_dataset, valid_labels, train_dataset, train_labels = merge_datasets(
+    train_datasets, train_size, valid_size)
+_,_,test_dataset, test_labels = merge_datasets(test_datasets, test_size)
+
+print('Training', train_dataset.shape, train_labels.shape)
+print('Validation', valid_dataset.shape, valid_labels.shape)
+print('Testing', test_dataset.shape, test_labels.shape)
+
+def randomize(dataset, labels):
+    permutation = np.random.permutation(labels.shape[0])
+    shuffled_dataset = dataset[permutation, :, :]
+    shuffled_labels = labels[permutation]
+
+    return shuffled_dataset, shuffled_labels
+
+train_dataset, train_labels = randomize(train_dataset, train_labels)
+test_dataset, test_labels = randomize(test_dataset, test_labels)
+valid_dataset, valid_labels = randomize(valid_dataset, valid_labels)
+
+#problem 4 verify the data are still good
+labelDics = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F', 6: 'G', 7: 'H', 8: 'I', 9: 'J'}
+def dis_shuffled_dataset(dataset, labels):
+    items  = random.sample(range(len(labels)), 8)
+
+    for i, item in enumerate(items):
+        plt.subplot(2,4,i+1)
+        plt.axis('off')
+        plt.title(labelDics[labels[item]])
+        plt.imshow(dataset[item])
+    plt.show()
+
+dis_shuffled_dataset(train_dataset, train_labels)
+dis_shuffled_dataset(valid_dataset, valid_labels)
+dis_shuffled_dataset(test_dataset, test_labels)
+
+pickle_file = dataPath + 'notMNIST.pickle'
+
+try:
+    f = open(pickle_file, 'wb')
+    save = {
+        'train_dataset' : train_dataset,
+        'train_labels': train_labels,
+        'valid_datasets': valid_dataset,
+        'valid_labels': valid_labels,
+        'test_dataset': test_dataset,
+        'test_labels': test_labels,
+        }
+    pickle.dump(save, f, pickle.HIGHEST_PROTOCOL)
+    f.close()
+except Exception as e:
+    print('Unable to save data to', pickle_file, ':',e)
+    raise
+
+statinfo = os.stat(pickle_file)
+print('Compressed pickle size:', statinfo.st_size)
+
