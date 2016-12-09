@@ -282,7 +282,7 @@ try:
     save = {
         'train_dataset' : train_dataset,
         'train_labels': train_labels,
-        'valid_datasets': valid_dataset,
+        'valid_dataset': valid_dataset,
         'valid_labels': valid_labels,
         'test_dataset': test_dataset,
         'test_labels': test_labels,
@@ -343,37 +343,37 @@ statinfo = os.stat(pickle_file_sanit)
 print('Compressed pickle size: ', statinfo.st_size)
 
 #Problem 6 Trin the data
-regr = LogisticRegression()
-X_test = test_dataset.reshape(test_dataset.shape[0], 28*28)
-Y_test = test_labels
+#regr = LogisticRegression()
+#X_test = test_dataset.reshape(test_dataset.shape[0], 28*28)
+#Y_test = test_labels
 
-sample_size = 50
-X_train = train_dataset[:sample_size].reshape(sample_size, 28*28)
-Y_train = train_labels[:sample_size]
-regr.fit(X_train, Y_train)
-regr.score(X_test, Y_test)
-pred_labels = regr.predict(X_test)
-dis_shuffled_dataset(test_dataset, pred_labels)
+#sample_size = 50
+#X_train = train_dataset[:sample_size].reshape(sample_size, 28*28)
+#Y_train = train_labels[:sample_size]
+#regr.fit(X_train, Y_train)
+#regr.score(X_test, Y_test)
+#pred_labels = regr.predict(X_test)
+#dis_shuffled_dataset(test_dataset, pred_labels)
 
-sample_size = 1000
-X_train = train_dataset[:sample_size].reshape(sample_size, 28*28)
-Y_train = train_labels[:sample_size]
-regr.fit(X_train, Y_train)
-regr.score(X_test, Y_test)
+#sample_size = 1000
+#X_train = train_dataset[:sample_size].reshape(sample_size, 28*28)
+#Y_train = train_labels[:sample_size]
+#regr.fit(X_train, Y_train)
+#regr.score(X_test, Y_test)
 
-sample_size = 5000
-X_train = train_dataset[:sample_size].reshape(sample_size, 28*28)
-Y_train = train_labels[:sample_size]
-regr.fit(X_train, Y_train)
-regr.score(X_test, Y_test)
+#sample_size = 5000
+#X_train = train_dataset[:sample_size].reshape(sample_size, 28*28)
+#Y_train = train_labels[:sample_size]
+#regr.fit(X_train, Y_train)
+#regr.score(X_test, Y_test)
 
-regr2 = LogisticRegression(solver = 'sag')
-sample_size = len(train_dataset)
-X_train = train_dataset[:sample_size].reshape(sample_size, 784)
-Y_train = train_labels[:sample_size]
-regr2.fit(X_train, Y_train)
-regr2.score(X_test, Y_test)
+#regr2 = LogisticRegression(solver = 'sag')
+#sample_size = len(train_dataset)
+#X_train = train_dataset[:sample_size].reshape(sample_size, 784)
+#Y_train = train_labels[:sample_size]
+#regr2.fit(X_train, Y_train)
+#regr2.score(X_test, y_test)
 
 
-pred_labels = regr.predict(X_test)
-dis_shuffled_dataset(test_dataset, pred_labels)
+#pred_labels = regr.predict(X_test)
+#dis_shuffled_dataset(test_dataset, pred_labels)
